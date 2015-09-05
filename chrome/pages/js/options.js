@@ -17,91 +17,91 @@
 
 /*global $: false, btoa: false */
 
-var background = chrome.extension.getBackgroundPage();
-var default_server = background.unblock_youku.default_server;
+var background = background || chrome.extension.getBackgroundPage();
+var default_redirect_server = background.unblock_youku.default_redirect_server;
 
-function remove_custom_server(callback) {
+function remove_custom_redirect_server(callback) {
     "use strict";
-    // localStorage.removeItem('custom_server');
-    background.remove_storage('custom_server', callback);
+    // localStorage.removeItem('custom_redirect_server');
+    background.remove_storage('custom_redirect_server', callback);
 }
 
-function get_custom_server(callback) {
+function get_custom_redirect_server(callback) {
     "use strict";
-    background.get_storage('custom_server', function(server_addr) {
+    background.get_storage('custom_redirect_server', function(server_addr) {
         if (typeof server_addr === 'undefined') {
-            callback(default_server);
+            callback(default_redirect_server);
         } else {
             callback(server_addr);
         }
     });
 }
 
-function set_custom_server(server_addr, callback) {
+function set_custom_redirect_server(server_addr, callback) {
     "use strict";
-    if (server_addr === default_server) {
+    if (server_addr === default_redirect_server) {
         // must remove, otherwise the post server won't be invoked
-        remove_custom_server(callback);
+        remove_custom_redirect_server(callback);
     } else {
         // chrome.storage.sync.onChange listener will change localStorage as well
-        // localStorage.custom_server = server_addr;
-        background.set_storage('custom_server', server_addr, callback);
+        // localStorage.custom_redirect_server = server_addr;
+        background.set_storage('custom_redirect_server', server_addr, callback);
     }
 }
 
 
-function show_message(type, content) {
+function show_redirect_message(type, content) {
     "use strict";
     var alert_type = 'info';
     if (type === 'success' || type === 'warning') {
         alert_type = type;  // success, info, or warning
     }
 
-    $('#message').html('<div class="alert alert-' + alert_type + '"><button type="button" class="close" data-dismiss="alert">×</button>' + content + '</div>');
+    $('#redirect_message').html('<div class="alert alert-' + alert_type + '"><button type="button" class="close" data-dismiss="alert">×</button>' + content + '</div>');
 }
 
 
-function show_error(content) {
-    $('#message').html('<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + content + '</div>');
+function show_redirect_error(content) {
+    $('#redirect_message').html('<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + content + '</div>');
 }
 
 
 $('document').ready(function() {
     "use strict";
-    get_custom_server(function(server_addr) {
-        $('input#custom_server').val(server_addr);
+    get_custom_redirect_server(function(server_addr) {
+        $('input#custom_redirect_server').val(server_addr);
     });
 
 
     $('button#test').click(function() {
-        var test_url = 'http://' + $('input#custom_server').val() + '?url=' + btoa('http://ipservice.163.com/isFromMainland');
-        show_message('info', 'Waiting...');
+        var test_url = 'http://' + $('input#custom_redirect_server').val() + '?url=' + btoa('http://ipservice.163.com/isFromMainland');
+        show_redirect_message('info', 'Waiting...');
         $.get(test_url, function(data) {
             if (data === 'true') {
-                show_message('success', 'Test passed. Please remember to save the new configuration.');
+                show_redirect_message('success', 'Test passed. Please remember to save the new configuration.');
             } else {
-                show_error('Test failed! Perhaps your server isn\'t located in mainland China.');
+                show_redirect_error('Test failed! Perhaps your server isn\'t located in mainland China.');
             }
         }).error(function() {
-            show_error('Test failed! Perhaps the server isn\'t working properly.');
+            show_redirect_error('Test failed! Perhaps the server isn\'t working properly.');
         });
     });
 
     $('button#save').click(function() {
-        set_custom_server($('input#custom_server').val(), function() {
-            show_message('info', 'The new backend server is set.');
+        set_custom_redirect_server($('input#custom_redirect_server').val(), function() {
+            show_redirect_message('info', 'The new backend server is set.');
         });
     });
 
 
     $('button#reset').click(function() {
-        remove_custom_server(function() {
-            $('input#custom_server').val(default_server);
-            show_message('warning', 'Reset to the default backend server.');
+        remove_custom_redirect_server(function() {
+            $('input#custom_redirect_server').val(default_redirect_server);
+            show_redirect_message('warning', 'Reset to the default backend server.');
         });
     });
 
-    $('#form_custom_server').submit(function(event) {
+    $('#form_custom_redirect_server').submit(function(event) {
         // prevent the default action of submitting a form
         event.preventDefault();
     });
