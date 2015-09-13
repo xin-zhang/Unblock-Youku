@@ -46,10 +46,10 @@ function setup_pac_data(proxy_prot_1, proxy_addr_1,
 function setup_proxy() {
     console.group('to set up proxy');
 
-    var proxy_server_proc = 'HTTPS';
-    var proxy_server_addr = 'secure.uku.im:993';
-    var backup_proxy_server_proc = 'HTTPS';
-    var backup_proxy_server_addr = 'proxy.mainland.io:993';
+    var proxy_server_proc = unblock_youku.default_proxy_server_proc;
+    var proxy_server_addr = unblock_youku.defaul_proxy_server_addr;
+    var backup_proxy_server_proc = unblock_youku.backup_proxy_server_proc;
+    var backup_proxy_server_addr = unblock_youku.backup_proxy_server_addr;
 
     /* DEBUG -- BEGIN */
     // proxy_server_proc = 'SOCKS5';

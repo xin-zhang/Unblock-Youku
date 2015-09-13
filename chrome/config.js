@@ -25,6 +25,12 @@
 // ====== Constant and Variable Settings ======
 var unblock_youku = unblock_youku || {};  // namespace
 
+// only for proxy mode
+unblock_youku.default_proxy_server_proc = 'HTTPS';
+unblock_youku.default_proxy_server_addr = 'secure.uku.im:993';
+unblock_youku.backup_proxy_server_proc = 'HTTPS';
+unblock_youku.backup_proxy_server_addr = 'proxy.mainland.io:993';
+
 // only for redirect mode
 unblock_youku.default_redirect_server = 'www.yōukù.com/proxy';
 // unblock_youku.default_redirect_server = '127.0.0.1:8888/proxy';
