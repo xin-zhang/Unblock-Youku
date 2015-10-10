@@ -156,6 +156,10 @@ function http_req_handler(client_request, client_response) {
         method: client_request.method,
         headers: proxy_request_headers
     };
+    if (proxy_request_headers['Accept-Encoding']
+        && proxy_request_headers['Accept-Encoding'].toLowerCase().indexOf('gzip') > -1) {
+        proxy_request_options.gzip = true;
+    }
     if (opts.proxy) {
         proxy_request_options.proxy = opts.proxy;
     }
@@ -171,7 +175,10 @@ function http_req_handler(client_request, client_response) {
 
     function handle_proxy_response_data(response, payload) {
         var filtered_headers = server_utils.filter_response_headers(response.headers);
-        filtered_headers['content-length'] = payload.length;
+        if (filtered_headers['content-encoding'] == 'gzip') {
+            filtered_headers['content-length'] = Buffer.byteLength(payload);
+            delete filtered_headers['content-encoding'];
+        }
         client_response.writeHead(response.statusCode, filtered_headers);
         client_response.end(payload);
     }
