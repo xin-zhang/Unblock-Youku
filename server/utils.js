@@ -113,7 +113,7 @@ function filter_request_headers(headers) {
         }
     }
 
-    ret_headers['Accept-Encoding'] = 'deflate';
+    ret_headers['Accept-Encoding'] = 'identity';
     return ret_headers;
 }
 
