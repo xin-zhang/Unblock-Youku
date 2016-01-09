@@ -16,12 +16,6 @@
             <div class="col-md-6 col-md-offset-3">
                 <form class="form-horizontal" id="form_custom_proxy_server" action="#">
                     <legend class="form-group text-center" for="custom_proxy_enable">Custom backend server for Proxy Mode</legend>
-                    <div class="form-group">
-                        <label class="control-label col-md-2" for="custom_proxy_enable">Status:</label>
-                        <div class="col-md-10">
-                            <label><input type="checkbox" id="custom_proxy_enable"> I want to enable custom proxy server</label>
-                        </div>
-                    </div>
                     <div class="form-group input-group-lg">
                         <label class="control-label col-md-2" for="custom_proxy_proc">Proc: </label>
                         <div class="col-md-10">
@@ -41,12 +35,13 @@
                     </div>
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10 btn-group btn-group-lg text-center">
-                            <button type="button" class="btn btn-default" id="custom_proxy_test">Test</button>
-                            <button type="button" class="btn btn-default" id="custom_proxy_save">Save</button>
+                            <button type="button" class="btn btn-default" id="custom_proxy_enable">Enable</button>
+                            <button type="button" class="btn btn-default" id="custom_proxy_reset">Reset to Default</button>
                         </div>
                     </div>
                 </form>
                 <div class="col-md-offset-2" id="proxy_message"></div>
+                <div class="col-md-offset-2" id="proxy_test_message"></div>
             </div>
         </div>
         <hr>

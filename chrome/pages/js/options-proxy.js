@@ -21,9 +21,26 @@ function get_custom_proxy_server(callback) {
 	});
 }
 
-function set_custom_proxy_server(server_info) {
+function test_custom_proxy_server(callback) {
+	var test_url = 'http://ipservice.163.com/isFromMainland';
+	show_proxy_test_message('info', 'Testing connection & Unblock...');
+	$.get(test_url, function(data) {
+		if (data === 'true') {
+			show_proxy_test_message('success', 'Unblock OK.');
+		} else {
+			show_proxy_test_message('danger', 'Unblock test failed! Perhaps your server isn\'t located in mainland China.');
+		}
+	}).error(function() {
+		show_proxy_test_message('danger', 'Unblock test failed! Perhaps the server isn\'t working properly.')
+	});
+}
+
+function set_custom_proxy_server(server_proc, server_addr, callback) {
 	"use strict";
-	// TODO
+	background.set_storage("custom_proxy_server", {
+		proc : server_proc,
+		addr : server_addr
+	}, callback);
 }
 
 function show_proxy_message(type, content) {
@@ -40,6 +57,16 @@ function show_proxy_error(content) {
     $('#proxy_message').html('<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + content + '</div>');
 }
 
+function show_proxy_test_message(type, content) {
+	"use strict";
+    var alert_type = 'info';
+    if (type === 'success' || type === 'warning' || type === 'danger') {
+        alert_type = type;  // success, info, or warning
+    }
+
+    $('#proxy_test_message').html('<div class="alert alert-' + alert_type + '"><button type="button" class="close" data-dismiss="alert">×</button>' + content + '</div>');
+}
+
 $(document).ready(function() {
 	"use strict";
 	get_custom_proxy_server(function(custom_enabled, server_proc, server_addr) {
@@ -50,42 +77,42 @@ $(document).ready(function() {
 		});
 		$('#custom_proxy_addr').val(server_addr);
 		if (custom_enabled === true) {
-			$("#custom_proxy_enable")[0].checked = true;
-		} else {
+			show_proxy_message('info', 'Status: Enabled');
 			$("#custom_proxy_proc").attr("disabled", true);
 			$("#custom_proxy_addr").attr("disabled", true);
-			$("#custom_proxy_test").attr("disabled", true);
-			$("#custom_proxy_save").attr("disabled", true);
+			$("#custom_proxy_enable").attr("disabled", true);
+		} else {
+			show_proxy_message('info', 'Status: NOT Enabled');
+			$("#custom_proxy_reset").attr("disabled", true);
 		}
 	});
 
-	$('#custom_proxy_enable').on("change", function() {
-		if (this.checked) {
-			$("#custom_proxy_proc").attr("disabled", false);
-			$("#custom_proxy_addr").attr("disabled", false);
-			$("#custom_proxy_test").attr("disabled", false);
-			$("#custom_proxy_save").attr("disabled", false);
-			show_proxy_message('success', 'Please proceed to Test and Save.');
-		} else {
-			$("#custom_proxy_proc").attr("disabled", true);
-			$("#custom_proxy_addr").attr("disabled", true);
-			$("#custom_proxy_test").attr("disabled", true);
-			$("#custom_proxy_save").attr("disabled", true);
-			// TODO
-			// reset proxy setting
-			// reset display
-			// write message
-		}
-	});
-
-	$('#custom_proxy_test').click(function() {
+	$('#custom_proxy_enable').click(function() {
 		var custom_proxy_proc = $('#custom_proxy_proc').val();
 		var custom_proxy_addr = $('#custom_proxy_addr').val();
-		
+		$("#custom_proxy_proc").attr("disabled", true);
+		$("#custom_proxy_addr").attr("disabled", true);
+		$("#custom_proxy_enable").attr("disabled", true);
+		set_custom_proxy_server(custom_proxy_proc, custom_proxy_addr, function() {
+			background.set_mode_name('normal', function() {
+				$("#custom_proxy_reset").attr("disabled", false);
+				show_proxy_message('success', 'Enabled custom proxy server, and changed to proxy mode.');
+				test_custom_proxy_server();
+			});
+		});
 	});
 
-	$('#custom_proxy_save').click(function() {
-		
+	$('#custom_proxy_reset').click(function() {
+		$("#custom_proxy_reset").attr("disabled", true);
+		remove_custom_proxy_server(function() {
+			background.set_mode_name('normal', function() {
+				$("#custom_proxy_proc").attr("disabled", false);
+				$("#custom_proxy_addr").attr("disabled", false);
+				$("#custom_proxy_enable").attr("disabled", false);
+				show_proxy_message('success', 'Reset custom proxy server, and changed to proxy mode.');
+				test_custom_proxy_server();
+			});
+		});
 	});
 
 	$('#form_custom_proxy_server').submit(function(event) {
