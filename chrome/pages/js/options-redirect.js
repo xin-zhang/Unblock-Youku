@@ -73,7 +73,7 @@ $('document').ready(function() {
     });
 
 
-    $('button#test').click(function() {
+    $('button#custom_redirect_test').click(function() {
         var test_url = 'http://' + $('input#custom_redirect_server').val() + '?url=' + btoa('http://ipservice.163.com/isFromMainland');
         show_redirect_message('info', 'Waiting...');
         $.get(test_url, function(data) {
@@ -87,14 +87,14 @@ $('document').ready(function() {
         });
     });
 
-    $('button#save').click(function() {
+    $('button#custom_redirect_save').click(function() {
         set_custom_redirect_server($('input#custom_redirect_server').val(), function() {
             show_redirect_message('info', 'The new backend server is set.');
         });
     });
 
 
-    $('button#reset').click(function() {
+    $('button#custom_redirect_reset').click(function() {
         remove_custom_redirect_server(function() {
             $('input#custom_redirect_server').val(default_redirect_server);
             show_redirect_message('warning', 'Reset to the default backend server.');
